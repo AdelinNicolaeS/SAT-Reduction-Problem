@@ -1,0 +1,80 @@
+Stanca Adelin-Nicolae 321CA
+Task1
+Pentru a realiza colorarea in mod corect a unui graf dat de la input am oferit
+SAT-ului 3 conditii care trebuie indeplinite: oricare 2 noduri adiacente sa nu
+aiba aceeasi culoare, un nod trebuie sa aiba cel putin o culoare si un nod
+trebuie sa aiba cel mult o culoare. Pentru a implementa aceste cerinte, am avut
+nevoie de variabile care sa retina numarul de noduri, numarul de muchii, culori
+date de la input, la care se adauga clauzele si variabilele ce vor fi utilizate
+de SAT. La nivel abstract, am creat arrayul y de indici ce reprezinta practic o
+bijectie pentru numarul de noduri si cel de culori. Practic, elementul de pe
+pozitia (i - 1) * colors + j (i luat de la 1 la nodes si j de la 1 la colors)
+reprezinta clauza care presupune ca pentru nodul i se va folosi culoarea j. In
+acest fel, daca in fisierul .cnf acest indice este negat, conditia nu va fi
+indeplinita, iar daca va fi pus in modul, conditia este adevarata. Pentru prima
+conditie, iau pentru fiecare pereche adiacenta din graf indicii, creez indicii
+de tip y pe care ii neg deoarece o culoare nu poate fi in amandoua nodurile
+simultan, dupa care introduc conditia in fisier. Complexitatea acestei conditii
+este O(E*C), unde E reprezinta muchiile si C numarul de culori. Pentru cea de-a
+doua conditie, vom lua toti indicii ce vizeaza apartenenta unei culori la un
+nod si vom cere ca macar una sa fie indeplinita. Astfel, complexitatea acestei
+conditii este O(N*C), N fiind numarul de noduri. Cea de-a treia conditie cere
+ca fiecare nod sa aiba o singura culoare, adica dintre oricare 2 culori alese
+arbitrar, maxim una sa fie in nod. Complexitatea acestei conditii este de
+O(N*C^2). Functiile decipherOracleAnswer si writeAnswer realizeaza salvarea
+rezultatelor in baza de date si interpretarea lor pentru a genera fisierul de
+iesire. Complexitatea finala a acestui task este de O(E*C + N*C + N*C^2) care
+se poate reduce la O(E*C + N*C^2).
+Task2
+Pentru a gasi o clica de dimensiune k, am incercat sa formulez catre oracol
+cerinta creand 3 conditii care trebuie indeplinite simultan. Astfel, prima
+conditie necesara viza faptul ca 2 noduri neadiacente nu se pot afla in acelasi
+timp in clica pe nicio pozitie, deci vom introduce in SAT toate clauzele ce
+mentioneaza ca 2 pozitii diferite din clica nu pot fi ocupate de 2 noduri
+neadiacente. Eficienta timp a acestei conditii este de O(N^2*K^2), unde K este
+lungimea clicii data la intrare, aceasta eficienta fiind compusa atat din
+parcurgerea matricei grafurilor, cat si din parcurgerea clicii cu 2 iteratori.
+Cea de-a doua conditie vizeaza faptul ca pe o pozitie a unei clici se va afla
+cel putin un nod, asadar pentru fiecare pozitie vom crea o clauza care cere
+SAT-ului ca macar un indice ce reflecta existenta unui nod pe acea pozitie sa
+fie adevarat. Eficienta acestei conditii este O(N*K). A treia conditie necesara
+spune ca o clica este alcatuita dintr-un sir distinct de noduri, deci un nod nu
+se poate afla decat o singura data in clica, astfel oricare ar fi 2 indici ce
+marcheaza existenta unui nod pe o pozitie, cel putin unul trebuie sa indice fals.
+Complexitatea acestei operatii este de O(N*K^2), aceasta fiind compusa din
+complexitatea necesara parcurgerii tuturor nodurilor la care se adauga si
+complexitatea pentru verificarea ca 2 pozitii din clica nu contin acelasi nod.
+In final, pentru rezolvarea taskului am avut complexitate O(N^2*K^2+N*K+N*K^2)
+care se reduce la O(N^2*K^2).
+Task3
+Pentru a afla minimum vertex cover, ne vom folosi de clasa Task2 pe care o vom
+apela incepand cu lungimea maxima posibila pana cand vom primi de la Task2
+semnalul de "True", adica pana cand vom gasi o clica a carei lungime va fi in
+mod natural cea maxima. Pentru a calcula complexitatea finalizarii acestui task
+ne vom folosi de complexitatea celui de-al doilea task. Astfel, worst case-ul
+pentru aflarea minimum vortex cover ar fi cazul in care clica va avea lungimea
+minima, deci va fi necesara parcurgerea etapelor de la task2 pentru un K=1,N 
+rezultand in complexitatea finala O(N * N^2 * K^2), adica O(N^3*K^2). Pe langa
+metodele deja definite in clasa abstracta Task, am implementat metoda
+reduceToTask2(k) al carei scop este acela de a suprascrie fisierul de la task2
+fara a mai fi necesara instantierea unui nou obiect de tip Task2. Toate aceste
+metode apelate in metoda solve() au o complexitate inferioara while-ului, deci
+nu afecteaza complexitate generala.
+BonusTask
+Pentru a rezolva acest task, am folosit Weigthed Partial Max-SAT, adica am
+alocat fiecarei clauze pe care am trimis-o spre SAT o pondere care variaza in
+functie de tipul de clauza (hard sau soft). Astfel, clauzele hard presupun ca
+macar unul dintre nodurile dintr-o pereche adiacenta trebuie sa fie parte din
+clica, in timp ce clauzele soft (care nu trebuie respectate in mod obligatoriu)
+presupun ca niciun nod sa nu fie prezent in clica, adica sa incercam de fapt
+sa minimizam numarul de noduri ce vor fi prezente in clica. Logica din spatele
+acestor cerinte este de a minimiza costul general, cost care este definit ca
+suma conditiilor soft ce nu vor fi indeplinite. Astfel, oracolul va alege din
+graf nodurile care asigura respectarea clauzelor hard, dar va alege nodurile
+astfel incat cat mai putine clauze soft sa nu aiba loc, adica sa lipseasca cat
+mai multe noduri din clica. Pentru fiecare clauza soft am ales ponderea 2, iar
+pentru toate clauzele hard am ales ponderea (sumWeigths + 1). Pentru crearea
+clauzelor hard am parcurs fiecare muchie, deci eficienta este de O(E), iar
+pentru clauzele soft am parcurs lista de noduri, deci eficienta este de O(N),
+eficienta total a taskului fiind O(N + E).
+
